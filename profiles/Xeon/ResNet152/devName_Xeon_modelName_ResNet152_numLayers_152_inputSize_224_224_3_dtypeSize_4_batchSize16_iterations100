@@ -1,0 +1,13 @@
+{
+    "config": {
+        "name": "ResNet152",
+        "layers": "152",
+        "pretrained": true,
+        "inputSize": "224_224_3",
+        "dtypeSize": "4"
+    },
+    "time avg": 0.3540501070022583,
+    "time std": 0.013531350549858398,
+    "energy avg": NaN,
+    "energy std": NaN
+}
