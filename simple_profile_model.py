@@ -67,7 +67,7 @@ def write_profile_json(args, time_list, energy_list, time_avg_std, energy_avg_st
     profile['time std'] = time_avg_std[1]
     profile['energy avg'] = energy_avg_std[0]
     profile['energy std'] = energy_avg_std[1]
-    profile['time_list'] = time_list]
+    profile['time_list'] = time_list
     profile['energy_list'] = energy_list
     json_object = json.dumps(profile, indent=4)
     with open(fpath, "w") as outfile:
