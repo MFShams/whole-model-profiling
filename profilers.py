@@ -30,7 +30,7 @@ def profile_model(args, model, inputs):
         time_list, energy_list = profile_model_cpu(args, model, inputs, device)
     else:
         raise ValueError("Unknown device!")
-    return (np.average(time_list), np.std(time_list)), (np.average(energy_list), np.std(energy_list))
+    return time_list, energy_list, (np.average(time_list), np.std(time_list)), (np.average(energy_list), np.std(energy_list))
 
 def profile_model_mps(args, model, inputs, device):
     # assumes a M2 MAC Metal Performance Shaders (MPS)

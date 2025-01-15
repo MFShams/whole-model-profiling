@@ -53,13 +53,13 @@ def main():
         inputs = torch.randn(args.batch_size, 3, 224, 224)
     model.eval()
     tok = time.time()
-    time_avg_std, energy_avg_std = p.profile_model(args, model, inputs)
+    time_list, energy_list, time_avg_std, energy_avg_std = p.profile_model(args, model, inputs)
     print('Profiling is DONE!')
     tik = time.time()
     print(f'it took {(tik-tok)/60:0.00f} minutes to finish')
-    write_profile_json(args, time_avg_std, energy_avg_std)
+    write_profile_json(args, time_list, energy_list, time_avg_std, energy_avg_std)
 
-def write_profile_json(args, time_avg_std, energy_avg_std):
+def write_profile_json(args, time_list, energy_list, time_avg_std, energy_avg_std):
     fpath = find_fpath(args)
     profile = {}
     profile['config'] = m.get_cnfig(args.model_name)
@@ -67,6 +67,8 @@ def write_profile_json(args, time_avg_std, energy_avg_std):
     profile['time std'] = time_avg_std[1]
     profile['energy avg'] = energy_avg_std[0]
     profile['energy std'] = energy_avg_std[1]
+    profile['time_list'] = time_list]
+    profile['energy_list'] = energy_list
     json_object = json.dumps(profile, indent=4)
     with open(fpath, "w") as outfile:
         outfile.write(json_object)
