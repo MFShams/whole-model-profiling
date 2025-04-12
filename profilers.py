@@ -84,11 +84,13 @@ def profile_model_nvidia(args, model, inputs, device):
         nvsmi = nvidia_smi.getInstance()
         power_list = []
         for _ in range(args.warmup_iters):
-            outputs = model(inputs)
+            with torch.no_grad():
+                outputs = model(inputs)
         torch.cuda.synchronize()  # Ensure all pending tasks are complete before starting
         for _ in tqdm(range(args.iterations), desc ='model power profiling...'):
         # for _ in range(args.iterations):
-            outputs = model(inputs)
+            with torch.no_grad():
+                outputs = model(inputs)
             power_list.append(nvsmi.DeviceQuery('power.draw')['gpu'][0]['power_readings']['power_draw'])
         energy_list = np.array(power_list)*time_list
     return time_list, energy_list
@@ -101,16 +103,19 @@ def profile_model_jetson(args, model, inputs, device):
     if args.profile_type in ['time','all']:
         time_list = []
         for _ in range(args.warmup_iters):
-            outputs = model(inputs)
+            with torch.no_grad():
+                outputs = model(inputs)
         start = torch.cuda.Event(enable_timing=True)
         end = torch.cuda.Event(enable_timing=True)
         torch.cuda.synchronize()  # Ensure all pending tasks are complete before starting
         for _ in tqdm(range(args.iterations), desc ='model latency profiling...'):
         # for _ in range(args.iterations):
+            torch.cuda.synchronize()
             start.record()
-            outputs = model(inputs)
-            torch.cuda.synchronize()  # Ensure all tasks are complete before ending
+            with torch.no_grad():
+                outputs = model(inputs)
             end.record()
+            torch.cuda.synchronize()  # Ensure all tasks are complete before ending
             elapsed_time = start.elapsed_time(end)
             time_list.append(elapsed_time)
     time_list = np.array(time_list)
@@ -119,14 +124,16 @@ def profile_model_jetson(args, model, inputs, device):
         with jtop() as jetson:
             power_list = []
             for _ in range(args.warmup_iters):
-                outputs = model(inputs)
+                with torch.no_grad():
+                    outputs = model(inputs)
                 if jetson.ok():
                     inst_power = jetson.power['tot']['power']
             torch.cuda.synchronize()  # Ensure all pending tasks are complete before starting
             count = 0
             for _ in tqdm(range(args.iterations), desc ='model power profiling...'):
             # for _ in range(args.iterations):
-                outputs = model(inputs)
+                with torch.no_grad():
+                    outputs = model(inputs)
                 if jetson.ok():
                     power_list.append(jetson.power['tot']['power'])
                     count += 1
