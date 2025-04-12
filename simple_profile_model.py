@@ -70,6 +70,7 @@ def construct_model(modelName, batchSize):
 
 def write_profile_json(args, time_list, energy_list, time_avg_std, energy_avg_std):
     fpath = find_fpath(args)
+    print(fpath)
     profile = {}
     profile['config'] = m.get_cnfig(args.model_name)
     profile['time avg'] = time_avg_std[0]
@@ -93,7 +94,7 @@ def find_fpath(args):
     if not os.path.exists(folder_path):
         os.mkdir(folder_path)
     m_config = m.get_cnfig(args.model_name)
-    f_name = folder_path+'/devName_'+args.device_name+'_modelName_'+args.model_name+'_numLayers_'+m_config['layers']+'_inputSize_'+m_config['inputSize']+'_dtypeSize_'+m_config['dtypeSize']+'_batchSize'+str(args.batch_size)+ '_iterations' +str(args.iterations)
+    f_name = folder_path+'/devName_'+args.device_name+'_modelName_'+args.model_name+'_numLayers_'+m_config['layers']+'_inputSize_'+m_config['inputSize']+'_dtypeSize_'+m_config['dtypeSize']+'_batchSize'+str(args.batch_size)+ '_iterations' +str(args.iterations)+'.json'
     return f_name
 
 if __name__=="__main__":

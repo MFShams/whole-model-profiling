@@ -77,7 +77,7 @@ def profile_model_nvidia(args, model, inputs, device):
             end.record()
             torch.cuda.synchronize()  # Ensure all tasks are complete before ending
             elapsed_time = start.elapsed_time(end)
-            time_list.append(elapsed_time)
+            time_list.append(elapsed_time/1000)
     time_list = np.array(time_list)
     if args.profile_type in ['energy','all']:
         from pynvml.smi import nvidia_smi
