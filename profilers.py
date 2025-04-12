@@ -63,16 +63,19 @@ def profile_model_nvidia(args, model, inputs, device):
     if args.profile_type in ['time','all']:
         time_list = []
         for _ in range(args.warmup_iters):
-            outputs = model(inputs)
+            with torch.no_grad():
+                outputs = model(inputs)
         start = torch.cuda.Event(enable_timing=True)
         end = torch.cuda.Event(enable_timing=True)
         torch.cuda.synchronize()  # Ensure all pending tasks are complete before starting
         for _ in tqdm(range(args.iterations), desc ='model latency profiling...'):
         # for _ in range(args.iterations):
+            torch.cuda.synchronize()
             start.record()
-            outputs = model(inputs)
-            torch.cuda.synchronize()  # Ensure all tasks are complete before ending
+            with torch.no_grad():
+                outputs = model(inputs)
             end.record()
+            torch.cuda.synchronize()  # Ensure all tasks are complete before ending
             elapsed_time = start.elapsed_time(end)
             time_list.append(elapsed_time)
     time_list = np.array(time_list)
