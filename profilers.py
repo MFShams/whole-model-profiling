@@ -117,7 +117,7 @@ def profile_model_jetson(args, model, inputs, device):
             end.record()
             torch.cuda.synchronize()  # Ensure all tasks are complete before ending
             elapsed_time = start.elapsed_time(end)
-            time_list.append(elapsed_time)
+            time_list.append(elapsed_time/1000)
     time_list = np.array(time_list)
     if args.profile_type in ['energy','all']:
         from jtop import jtop
@@ -135,7 +135,7 @@ def profile_model_jetson(args, model, inputs, device):
                 with torch.no_grad():
                     outputs = model(inputs)
                 if jetson.ok():
-                    power_list.append(jetson.power['tot']['power'])
+                    power_list.append(jetson.power['tot']['power']/1000)
                     count += 1
             if count<args.iterations:
                 print(f'WARNING: the model was profiled for {count} instead of {args.iterations} times!')
