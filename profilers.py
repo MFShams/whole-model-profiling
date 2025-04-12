@@ -129,7 +129,7 @@ def profile_model_jetson(args, model, inputs, device):
                     count += 1
             if count<args.iterations:
                 print(f'WARNING: the model was profiled for {count} instead of {args.iterations} times!')
-        energy_list = np.array(power_list)*time_list
+        energy_list = np.array(power_list)*time_list[:count]
     return time_list, energy_list
 
 def profile_model_intlcpu(args, model, inputs, device):

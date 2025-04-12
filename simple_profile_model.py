@@ -48,9 +48,7 @@ def main():
         args.warmup_iters = 20
     else:
         args.warmup_iters = 0
-    if args.model_name=='ResNet152':
-        model = m.resnet152()
-        inputs = torch.randn(args.batch_size, 3, 224, 224)
+    model, inputs = construct_model(args.model_name, args.batch_size)
     model.eval()
     tok = time.time()
     time_list, energy_list, time_avg_std, energy_avg_std = p.profile_model(args, model, inputs)
@@ -58,6 +56,17 @@ def main():
     tik = time.time()
     print(f'it took {(tik-tok)/60:0.00f} minutes to finish')
     write_profile_json(args, time_list, energy_list, time_avg_std, energy_avg_std)
+
+def construct_model(modelName, batchSize):
+    if modelName=='ResNet152':
+        model = m.resnet152()
+        inputs = torch.randn(batchSize, 3, 224, 224)
+    elif modelName=='VGG19':
+        model = m.vgg19()
+        inputs = torch.randn(batchSize, 3, 224, 224)
+    else:
+        raise ValueError("Unknown model!")
+    return model, inputs
 
 def write_profile_json(args, time_list, energy_list, time_avg_std, energy_avg_std):
     fpath = find_fpath(args)
