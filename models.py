@@ -8,6 +8,7 @@
 #######################################################################
 
 import torch
+from torchvision import models
 
 if str(torch.randn(1).dtype) == 'torch.float32':
     dtypeSize = '4'
@@ -33,7 +34,8 @@ def get_cnfig(modelName):
 
 def resnet152():
     isTrained = model_configs['ResNet152']['pretrained']
-    return torch.hub.load('pytorch/vision:v0.10.0', 'resnet152', pretrained=isTrained)
+    return models.resnet152(pretrained=isTrained)
+    # return torch.hub.load('pytorch/vision:v0.10.0', 'resnet152', pretrained=isTrained)
 
 def vgg19():
     isTrained = model_configs['VGG19']['pretrained']
